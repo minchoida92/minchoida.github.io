@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minchoida — UX/UI Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #F6F1E9;
+      --cream-dark: #EDE6D8;
+      --warm-mid: #D4C9B5;
+      --ink: #1C1915;
+      --ink-light: #6B6358;
+      --ink-faint: #A89F93;
+      --accent: #8B6F4E;
+      --accent-light: #C4A882;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 8px; height: 8px;
+      background: var(--ink);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--ink-light);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.15s ease;
+      opacity: 0.5;
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 60px;
+      background: linear-gradient(to bottom, var(--cream) 60%, transparent);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--ink-light);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 60px 80px;
+    }
+    .hero-label {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.3s forwards;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(56px, 8vw, 110px);
+      font-weight: 300;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      max-width: 80vw;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.5s forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-sub {
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+    .hero-sub p {
+      font-size: 15px;
+      color: var(--ink-light);
+      max-width: 360px;
+      font-weight: 300;
+    }
+    .hero-scroll {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      text-decoration: none;
+    }
+    .hero-scroll-line {
+      width: 48px;
+      height: 1px;
+      background: var(--warm-mid);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-scroll-line::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: slideRight 1.8s ease-in-out infinite;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--cream-dark);
+      margin: 0 60px;
+    }
+
+    /* Section */
+    section { padding: 100px 60px; }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      display: block;
+      height: 1px;
+      width: 40px;
+      background: var(--warm-mid);
+    }
+
+    /* Work grid */
+    .work-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .work-item {
+      background: var(--cream-dark);
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+    .work-item:nth-child(3n+1) { grid-column: span 2; aspect-ratio: 16/7; }
+    .work-item-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .work-item:hover .work-item-img { transform: scale(1.04); }
+
+    /* Placeholder image for demo */
+    .work-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: var(--ink-faint);
+      background: var(--cream-dark);
+      position: relative;
+      overflow: hidden;
+    }
+    .work-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(196,168,130,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(139,111,78,0.08) 0%, transparent 60%);
+    }
+    .work-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(28,25,21,0.85) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+    }
+    .work-item:hover .work-overlay { opacity: 1; }
+    .work-overlay-num {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--accent-light);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .work-overlay-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+    .work-overlay-tag {
+      font-size: 12px;
+      color: rgba(246,241,233,0.6);
+      font-weight: 300;
+    }
+    .work-overlay-arrow {
+      position: absolute;
+      top: 28px;
+      right: 28px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(246,241,233,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream);
+      font-size: 16px;
+      transform: rotate(-45deg);
+      transition: transform 0.3s;
+    }
+    .work-item:hover .work-overlay-arrow { transform: rotate(0deg); }
+
+    /* About */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 100px;
+      align-items: start;
+    }
+    .about-portrait {
+      aspect-ratio: 3/4;
+      background: var(--cream-dark);
+      position: relative;
+      overflow: hidden;
+    }
+    .about-portrait::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 40%, rgba(196,168,130,0.2) 0%, transparent 70%);
+    }
+    .about-portrait-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      color: var(--ink-faint);
+      letter-spacing: 0.06em;
+    }
+    .about-content { padding-top: 20px; }
+    .about-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 4vw, 52px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 32px;
+      letter-spacing: -0.01em;
+    }
+    .about-title em { font-style: italic; color: var(--accent); }
+    .about-text {
+      font-size: 15px;
+      color: var(--ink-light);
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .about-skills {
+      margin-top: 48px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .skill-tag {
+      padding: 8px 18px;
+      border: 1px solid var(--warm-mid);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--ink-light);
+      border-radius: 100px;
+    }
+
+    /* Contact */
+    .contact-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 60px 0;
+    }
+    .contact-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 6vw, 80px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+    }
+    .contact-title em { font-style: italic; color: var(--accent); }
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 40px;
+      background: var(--ink);
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 400;
+      transition: background 0.3s, transform 0.3s;
+      margin-top: 16px;
+      cursor: none;
+    }
+    .contact-btn:hover { background: var(--accent); }
+    .contact-links {
+      margin-top: 48px;
+      display: flex;
+      gap: 40px;
+    }
+    .contact-links a {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-links a:hover { color: var(--ink); }
+
+    /* Footer */
+    footer {
+      padding: 32px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--cream-dark);
+    }
+    footer p {
+      font-size: 12px;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideRight {
+      0% { left: -100%; }
+      50% { left: 100%; }
+      100% { left: 100%; }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 768px) {
+      nav { padding: 24px 28px; }
+      .nav-links { display: none; }
+      .hero { padding: 0 28px 60px; }
+      section { padding: 72px 28px; }
+      .divider { margin: 0 28px; }
+      .work-grid { grid-template-columns: 1fr; }
+      .work-item:nth-child(3n+1) { grid-column: span 1; aspect-ratio: 4/3; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      footer { padding: 24px 28px; flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-logo">Minchoida</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <p class="hero-label">UX/UI Designer · Seoul</p>
+    <h1 class="hero-title">
+      Designing<br />experiences that<br /><em>feel right.</em>
+    </h1>
+    <div class="hero-sub">
+      <p>사람과 제품 사이의 접점을 섬세하게 설계합니다. 사용자의 맥락을 읽고, 의도가 담긴 인터페이스를 만들어요.</p>
+      <a href="#work" class="hero-scroll">
+        <span class="hero-scroll-line"></span>
+        Scroll
+      </a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Work -->
+  <section id="work">
+    <p class="section-label reveal">Selected Work</p>
+    <div class="work-grid reveal">
+
+      <!-- Project 1 (wide) -->
+      <div class="work-item">
+        <div class="work-placeholder">프로젝트 이미지를 여기에</div>
+        <div class="work-overlay">
+          <span class="work-overlay-num">01 / 06</span>
+          <h3 class="work-overlay-title">프로젝트 이름</h3>
+          <p class="work-overlay-tag">UX Research · Product Design · 2024</p>
+          <div class="work-overlay-arrow">↗</div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="work-item">
+        <div class="work-placeholder">프로젝트 이미지를 여기에</div>
+        <div class="work-overlay">
+          <span class="work-overlay-num">02 / 06</span>
+          <h3 class="work-overlay-title">프로젝트 이름</h3>
+          <p class="work-overlay-tag">App Design · 2024</p>
+          <div class="work-overlay-arrow">↗</div>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="work-item">
+        <div class="work-placeholder">프로젝트 이미지를 여기에</div>
+        <div class="work-overlay">
+          <span class="work-overlay-num">03 / 06</span>
+          <h3 class="work-overlay-title">프로젝트 이름</h3>
+          <p class="work-overlay-tag">Web Design · 2023</p>
+          <div class="work-overlay-arrow">↗</div>
+        </div>
+      </div>
+
+      <!-- Project 4 (wide) -->
+      <div class="work-item">
+        <div class="work-placeholder">프로젝트 이미지를 여기에</div>
+        <div class="work-overlay">
+          <span class="work-overlay-num">04 / 06</span>
+          <h3 class="work-overlay-title">프로젝트 이름</h3>
+          <p class="work-overlay-tag">Design System · 2023</p>
+          <div class="work-overlay-arrow">↗</div>
+        </div>
+      </div>
+
+      <!-- Project 5 -->
+      <div class="work-item">
+        <div class="work-placeholder">프로젝트 이미지를 여기에</div>
+        <div class="work-overlay">
+          <span class="work-overlay-num">05 / 06</span>
+          <h3 class="work-overlay-title">프로젝트 이름</h3>
+          <p class="work-overlay-tag">UX/UI · 2023</p>
+          <div class="work-overlay-arrow">↗</div>
+        </div>
+      </div>
+
+      <!-- Project 6 -->
+      <div class="work-item">
+        <div class="work-placeholder">프로젝트 이미지를 여기에</div>
+        <div class="work-overlay">
+          <span class="work-overlay-num">06 / 06</span>
+          <h3 class="work-overlay-title">프로젝트 이름</h3>
+          <p class="work-overlay-tag">Mobile · 2022</p>
+          <div class="work-overlay-arrow">↗</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- About -->
+  <section id="about">
+    <p class="section-label reveal">About</p>
+    <div class="about-grid">
+      <div class="about-portrait reveal">
+        <div class="about-portrait-placeholder">사진을 여기에</div>
+      </div>
+      <div class="about-content reveal">
+        <h2 class="about-title">
+          Context-driven<br /><em>designer</em><br />based in Seoul.
+        </h2>
+        <p class="about-text">
+          안녕하세요, 민초이다입니다. UX/UI 디자이너로서 사용자의 행동 패턴과 맥락을 깊이 이해하고, 그것을 직관적인 인터페이스로 풀어내는 일을 합니다.
+        </p>
+        <p class="about-text">
+          복잡한 문제를 단순하게 만드는 것, 그리고 사용자가 목표에 자연스럽게 도달하도록 돕는 경험을 설계하는 것에 특히 관심이 많아요.
+        </p>
+        <div class="about-skills">
+          <span class="skill-tag">Figma</span>
+          <span class="skill-tag">UX Research</span>
+          <span class="skill-tag">Prototyping</span>
+          <span class="skill-tag">Design System</span>
+          <span class="skill-tag">Usability Testing</span>
+          <span class="skill-tag">Interaction Design</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="contact-inner reveal">
+      <h2 class="contact-title">
+        Let's make<br />something <em>great.</em>
+      </h2>
+      <a href="mailto:hello@minchoida.com" class="contact-btn">
+        Get in Touch →
+      </a>
+      <div class="contact-links">
+        <a href="#">LinkedIn</a>
+        <a href="#">Behance</a>
+        <a href="#">Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Minchoida. All rights reserved.</p>
+    <p>Seoul, Korea · Available for opportunities</p>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button, .work-item').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
+        cursor.style.background = 'var(--accent)';
+        ring.style.opacity = '0';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursor.style.background = 'var(--ink)';
+        ring.style.opacity = '0.5';
+      });
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
