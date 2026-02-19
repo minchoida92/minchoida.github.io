@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenme Invest Flow — Minchoida</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --white: #FFFFFF;
+      --off: #F7F8FA;
+      --border: #E8EAED;
+      --ink: #0D0F12;
+      --ink-2: #3D4147;
+      --ink-3: #7A7F88;
+      --accent: #0057FF;
+      --accent-pale: #EEF3FF;
+      --green: #00C48C;
+      --green-pale: #EDFAF5;
+      --red: #FF4D4D;
+      --red-pale: #FFF0F0;
+      --amber: #F59E0B;
+      --amber-pale: #FFFBEB;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--ink); font-size: 16px; line-height: 1.6; overflow-x: hidden; cursor: none; }
+
+    /* Cursor */
+    .cursor { width: 8px; height: 8px; background: var(--ink); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.12s, background 0.2s; }
+    .cursor-ring { width: 32px; height: 32px; border: 1.5px solid rgba(13,15,18,0.25); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: all 0.14s ease; }
+
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 0 48px; height: 64px; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Bricolage Grotesque', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
+    .nav-back { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; text-decoration: none; color: var(--ink-3); transition: color 0.2s; }
+    .nav-back:hover { color: var(--ink); }
+    .nav-back svg { transition: transform 0.2s; }
+    .nav-back:hover svg { transform: translateX(-3px); }
+
+    /* Hero */
+    .hero { padding: 120px 48px 80px; max-width: 1200px; margin: 0 auto; }
+    .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 60px; margin-bottom: 64px; }
+    .hero-left { flex: 1; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--accent-pale); border-radius: 100px; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 24px; }
+    .hero-badge-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    .hero-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(44px, 5.5vw, 72px); font-weight: 800; line-height: 1.0; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 24px; }
+    .hero-title span { color: var(--accent); }
+    .hero-desc { font-size: 17px; color: var(--ink-2); line-height: 1.75; font-weight: 300; max-width: 520px; }
+    .hero-meta { display: flex; flex-direction: column; gap: 24px; min-width: 240px; padding-top: 8px; }
+    .meta-block {}
+    .meta-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+    .meta-val { font-size: 14px; color: var(--ink-2); font-weight: 400; }
+    .meta-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .chip { padding: 4px 10px; background: var(--off); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; color: var(--ink-2); font-weight: 500; }
+
+    /* Hero image */
+    .hero-img { width: 100%; border-radius: 16px; overflow: hidden; background: var(--off); border: 1px solid var(--border); }
+    .hero-img img { width: 100%; display: block; }
+
+    /* Content wrapper */
+    .content { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+    .content-narrow { max-width: 720px; }
+
+    /* Section */
+    .section { padding: 80px 0; border-top: 1px solid var(--border); }
+    .section-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-tag::before { content: ''; display: block; width: 16px; height: 2px; background: var(--accent); border-radius: 2px; }
+    .section-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(28px, 3vw, 40px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 20px; }
+    .section-title span { color: var(--accent); }
+    .section-subtitle { font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); margin: 40px 0 16px; }
+    .body-text { font-size: 15px; color: var(--ink-2); line-height: 1.85; font-weight: 300; margin-bottom: 16px; }
+    .body-text strong { font-weight: 600; color: var(--ink); }
+    .body-text em { font-style: italic; color: var(--ink-3); }
+
+    /* Full image */
+    .img-block { width: 100%; border-radius: 12px; overflow: hidden; background: var(--off); border: 1px solid var(--border); margin: 40px 0; }
+    .img-block img { width: 100%; display: block; }
+    .img-caption { font-size: 12px; color: var(--ink-3); text-align: center; margin-top: -28px; margin-bottom: 40px; padding: 0 48px; }
+
+    /* Callout box */
+    .callout { background: var(--accent-pale); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 20px 24px; margin: 32px 0; }
+    .callout p { font-size: 15px; color: var(--ink); line-height: 1.7; font-weight: 400; }
+    .callout strong { font-weight: 600; }
+    .callout.amber { background: var(--amber-pale); border-left-color: var(--amber); }
+    .callout.green { background: var(--green-pale); border-left-color: var(--green); }
+
+    /* Research method cards */
+    .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 40px 0; }
+    .method-card { border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .method-icon { font-size: 24px; margin-bottom: 12px; }
+    .method-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+    .method-desc { font-size: 13px; color: var(--ink-3); line-height: 1.55; }
+    .method-detail { font-size: 12px; color: var(--accent); font-weight: 500; margin-top: 10px; }
+
+    /* Insight cards */
+    .insight-list { display: flex; flex-direction: column; gap: 16px; margin: 40px 0; }
+    .insight-item { display: grid; grid-template-columns: 48px 1fr; gap: 20px; align-items: start; border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .insight-num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800; color: var(--accent); }
+    .insight-body h4 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+    .insight-body p { font-size: 14px; color: var(--ink-2); line-height: 1.65; font-weight: 300; }
+    .insight-body .insight-quote { font-size: 13px; color: var(--ink-3); font-style: italic; margin-top: 10px; padding-left: 12px; border-left: 2px solid var(--border); }
+    .insight-body .insight-lead { font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 10px; }
+
+    /* Market stat cards */
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 40px 0; }
+    .stat-card { background: var(--off); border: 1px solid var(--border); border-radius: 12px; padding: 24px 20px; }
+    .stat-num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 6px; }
+    .stat-num.blue { color: var(--accent); }
+    .stat-num.green { color: var(--green); }
+    .stat-desc { font-size: 13px; color: var(--ink-2); line-height: 1.5; font-weight: 400; margin-bottom: 8px; }
+    .stat-source { font-size: 11px; color: var(--ink-3); }
+
+    /* Before / After */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 40px 0; }
+    .compare-card { border-radius: 12px; padding: 28px 24px; }
+    .compare-card.before { background: var(--red-pale); border: 1px solid #FFDDDD; }
+    .compare-card.after { background: var(--green-pale); border: 1px solid #C3F0DB; }
+    .compare-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; }
+    .compare-card.before .compare-label { color: var(--red); }
+    .compare-card.after .compare-label { color: var(--green); }
+    .compare-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-2); line-height: 1.55; margin-bottom: 12px; }
+    .compare-item:last-child { margin-bottom: 0; }
+    .compare-icon { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
+
+    /* Competitive table */
+    .table-wrap { overflow-x: auto; margin: 40px 0; border-radius: 12px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead { background: var(--off); }
+    thead th { padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--border); }
+    tbody td { padding: 14px 16px; border-bottom: 1px solid var(--border); color: var(--ink-2); vertical-align: top; line-height: 1.5; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.highlight td { background: var(--accent-pale); }
+    tbody tr.highlight td:first-child { border-left: 3px solid var(--accent); }
+    .td-strong { font-weight: 600; color: var(--ink); }
+    .tag-gap { display: inline-block; background: var(--red-pale); color: var(--red); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+    .tag-ok { display: inline-block; background: var(--green-pale); color: var(--green); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+
+    /* Persona */
+    .persona-card { background: var(--off); border: 1px solid var(--border); border-radius: 16px; padding: 40px; display: grid; grid-template-columns: 200px 1fr; gap: 48px; margin: 40px 0; align-items: start; }
+    .persona-avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--accent-pale); display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700; color: var(--accent); margin-bottom: 20px; }
+    .persona-name { font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .persona-type { font-size: 13px; color: var(--ink-3); margin-bottom: 20px; }
+    .persona-attrs { display: flex; flex-direction: column; gap: 0; }
+    .persona-attr { display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .persona-attr:last-child { border-bottom: none; }
+    .attr-key { color: var(--ink-3); font-weight: 500; }
+    .attr-val { color: var(--ink); font-weight: 500; }
+    .persona-right { display: flex; flex-direction: column; gap: 28px; }
+    .persona-section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
+    .persona-quote { font-size: 15px; color: var(--ink-2); font-style: italic; line-height: 1.65; padding-left: 16px; border-left: 3px solid var(--accent); margin-bottom: 10px; }
+    .concern-list { display: flex; flex-direction: column; gap: 8px; }
+    .concern-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-2); }
+    .concern-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+    .hope-item { display: flex; gap: 14px; padding: 14px; background: var(--white); border: 1px solid var(--border); border-radius: 10px; }
+    .hope-num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); min-width: 28px; }
+    .hope-text h5 { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .hope-text p { font-size: 13px; color: var(--ink-3); }
+
+    /* Journey map */
+    .journey { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 40px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .journey-step { padding: 24px 20px; border-right: 1px solid var(--border); }
+    .journey-step:last-child { border-right: none; }
+    .journey-step-num { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 10px; }
+    .journey-step-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
+    .journey-row-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); margin-bottom: 6px; }
+    .journey-text { font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-bottom: 14px; }
+    .journey-emotion { font-size: 18px; margin-bottom: 6px; }
+    .journey-pain { font-size: 12px; color: var(--red); line-height: 1.5; }
+
+    /* Design principles */
+    .principles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 40px 0; }
+    .principle-card { border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; }
+    .principle-num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; margin-bottom: 12px; }
+    .principle-title { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+    .principle-desc { font-size: 13px; color: var(--ink-3); line-height: 1.65; }
+
+    /* Iteration / wireframe comparison */
+    .iteration-block { margin: 40px 0; }
+    .iteration-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .iter-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .iter-label { padding: 12px 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+    .iter-label.v1 { background: #FFF5F0; color: #C05A1F; }
+    .iter-label.v2 { background: var(--accent-pale); color: var(--accent); }
+    .iter-img { background: var(--off); padding: 24px; min-height: 160px; display: flex; align-items: center; justify-content: center; }
+    .iter-img img { width: 100%; display: block; border-radius: 6px; }
+    .iter-note { padding: 16px; background: var(--white); font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+    .iter-note strong { color: var(--ink); font-weight: 600; }
+
+    /* IA */
+    .ia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 40px 0; }
+    .ia-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .ia-header { padding: 16px 20px; background: var(--off); border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--ink); }
+    .ia-steps { padding: 16px 20px; display: flex; flex-direction: column; gap: 0; }
+    .ia-step { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .ia-step:last-child { border-bottom: none; }
+    .ia-step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-pale); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+    .ia-step-text { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+    .ia-step-text strong { font-weight: 600; color: var(--ink); display: block; margin-bottom: 2px; }
+
+    /* Avatar colors */
+    .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0; }
+    .avatar-card { border-radius: 12px; padding: 24px 20px; display: flex; align-items: center; gap: 16px; border: 1px solid var(--border); }
+    .avatar-circle { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; }
+    .avatar-circle.red { background: #FF4D4D; }
+    .avatar-circle.yellow { background: #FFB800; }
+    .avatar-circle.green { background: #00C48C; }
+    .avatar-info h4 { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .avatar-info p { font-size: 12px; color: var(--ink-3); }
+
+    /* Design decision callouts */
+    .decision-block { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 32px 0; }
+    .decision-header { padding: 16px 20px; background: var(--off); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .decision-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-pale); padding: 3px 8px; border-radius: 4px; }
+    .decision-title { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .decision-body { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .decision-body.single { grid-template-columns: 1fr; }
+    .decision-col-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+    .decision-text { font-size: 14px; color: var(--ink-2); line-height: 1.65; font-weight: 300; }
+    .decision-divider { width: 1px; background: var(--border); }
+
+    /* Process steps */
+    .process { display: flex; flex-direction: column; gap: 0; margin: 40px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .process-step { display: grid; grid-template-columns: 64px 1fr; border-bottom: 1px solid var(--border); }
+    .process-step:last-child { border-bottom: none; }
+    .step-num-col { display: flex; align-items: flex-start; justify-content: center; padding: 24px 0; background: var(--off); border-right: 1px solid var(--border); font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent); padding-top: 26px; }
+    .step-body { padding: 24px 28px; }
+    .step-body h4 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+    .step-body p { font-size: 14px; color: var(--ink-2); line-height: 1.7; font-weight: 300; }
+    .step-rationale { margin-top: 14px; padding: 12px 16px; background: var(--accent-pale); border-radius: 8px; font-size: 13px; color: var(--accent); line-height: 1.6; }
+    .step-rationale strong { font-weight: 600; }
+
+    /* Trust pillars */
+    .trust-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 40px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .trust-item { padding: 24px 20px; border-right: 1px solid var(--border); }
+    .trust-item:last-child { border-right: none; }
+    .trust-num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); margin-bottom: 10px; }
+    .trust-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+    .trust-text { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+
+    /* Results */
+    .results-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 40px 0; }
+    .result-card { padding: 28px 20px; border-right: 1px solid var(--border); }
+    .result-card:last-child { border-right: none; }
+    .result-num { font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 6px; }
+    .result-num.up { color: var(--green); }
+    .result-num.down { color: var(--accent); }
+    .result-label { font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-bottom: 6px; }
+    .result-context { font-size: 11px; color: var(--ink-3); line-height: 1.4; }
+
+    /* Reflection */
+    .reflection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 40px 0; }
+    .reflection-card { border-radius: 12px; padding: 28px 24px; border: 1px solid var(--border); }
+    .reflection-card.learned { background: var(--green-pale); border-color: #C3F0DB; }
+    .reflection-card.next { background: var(--amber-pale); border-color: #FDE68A; }
+    .reflection-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; }
+    .reflection-card.learned .reflection-label { color: var(--green); }
+    .reflection-card.next .reflection-label { color: var(--amber); }
+    .reflection-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
+    .reflection-item:last-child { margin-bottom: 0; }
+    .reflection-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .learned .reflection-dot { background: var(--green); }
+    .next .reflection-dot { background: var(--amber); }
+
+    /* Next */
+    .next-wrap { border-top: 1px solid var(--border); }
+    .next-project { display: flex; align-items: center; justify-content: space-between; padding: 48px; text-decoration: none; transition: background 0.25s; }
+    .next-project:hover { background: var(--off); }
+    .next-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+    .next-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+    .next-arrow { font-size: 28px; color: var(--ink-3); transition: transform 0.2s; }
+    .next-project:hover .next-arrow { transform: translateX(6px); }
+
+    footer { padding: 24px 48px; display: flex; justify-content: space-between; border-top: 1px solid var(--border); }
+    footer p { font-size: 12px; color: var(--ink-3); }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    hr.divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+    @media (max-width: 900px) {
+      nav { padding: 0 24px; }
+      .hero { padding: 100px 24px 60px; }
+      .hero-top { flex-direction: column; }
+      .content { padding: 0 24px; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .journey { grid-template-columns: 1fr 1fr; }
+      .journey-step { border-bottom: 1px solid var(--border); }
+      .trust-grid { grid-template-columns: 1fr 1fr; }
+      .trust-item { border-bottom: 1px solid var(--border); }
+      .results-grid { grid-template-columns: 1fr 1fr; }
+      .result-card { border-bottom: 1px solid var(--border); }
+      .ia-grid { grid-template-columns: 1fr; }
+      .persona-card { grid-template-columns: 1fr; }
+      .avatar-grid { grid-template-columns: 1fr; }
+      .method-grid { grid-template-columns: 1fr; }
+      .principles-grid { grid-template-columns: 1fr; }
+      .reflection-grid { grid-template-columns: 1fr; }
+      .decision-body { grid-template-columns: 1fr; }
+      .decision-divider { display: none; }
+      .iteration-row { grid-template-columns: 1fr; }
+      .next-project { padding: 32px 24px; }
+      footer { padding: 20px 24px; flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav>
+    <a href="/" class="nav-logo">Minchoida</a>
+    <a href="/" class="nav-back">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m7-7-7 7 7 7"/></svg>
+      All Work
+    </a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-top">
+      <div class="hero-left">
+        <div class="hero-badge"><span class="hero-badge-dot"></span>Case Study · 01 / 06</div>
+        <h1 class="hero-title">Lenme<br /><span>Invest Flow</span></h1>
+        <p class="hero-desc">How I redesigned the peer-to-peer investor experience — making complex financial decisions feel fast, simple, and trustworthy on a small mobile screen.</p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-block">
+          <p class="meta-label">My Role</p>
+          <p class="meta-val">Product Designer (End-to-end)</p>
+        </div>
+        <div class="meta-block">
+          <p class="meta-label">Scope</p>
+          <div class="meta-chips">
+            <span class="chip">User Research</span>
+            <span class="chip">Wireframing</span>
+            <span class="chip">Prototyping</span>
+            <span class="chip">UI Design</span>
+            <span class="chip">Usability Testing</span>
+          </div>
+        </div>
+        <div class="meta-block">
+          <p class="meta-label">Company</p>
+          <p class="meta-val">Lenme Inc.</p>
+        </div>
+        <div class="meta-block">
+          <p class="meta-label">Timeline</p>
+          <p class="meta-val">2024 · ~3 months</p>
+        </div>
+        <div class="meta-block">
+          <p class="meta-label">App Store</p>
+          <p class="meta-val">40K+ Ratings ⭐</p>
+        </div>
+      </div>
+    </div>
+    <div class="hero-img">
+      <img src="https://images.squarespace-cdn.com/content/v1/649c11671d3afa5d1043caf8/febfa611-6bae-4fdc-b504-1d96d4f3eb71/Frame+148.png" alt="Lenme Invest Flow" />
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── OVERVIEW ── -->
+    <div class="section reveal">
+      <p class="section-tag">Overview</p>
+      <h2 class="section-title">What is <span>Lenme?</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">Lenme is a peer-to-peer lending app that connects everyday people who need quick loans with everyday investors. Unlike traditional investing platforms that require large minimums or financial expertise, Lenme allows anyone to start investing with as little as $50.</p>
+        <p class="body-text">I was brought in as the <strong>Product Designer for the investor side</strong>, responsible for the full experience — from discovering loan requests and evaluating borrowers to submitting offers and tracking repayments.</p>
+        <p class="body-text">I worked closely with the PM and two engineers across three months, running short iteration cycles from research insights through low-fidelity wireframes, interactive prototypes, and final visual polish.</p>
+      </div>
+
+      <div class="callout">
+        <p><strong>Scope clarification:</strong> This case study covers the <strong>investor-facing flow only</strong>. The borrower experience, onboarding, and payment processing were handled by separate team members. My primary focus was the marketplace, borrower evaluation, and offer submission screens.</p>
+      </div>
+    </div>
+
+    <!-- ── THE PROBLEM ── -->
+    <div class="section reveal">
+      <p class="section-tag">Problem Space</p>
+      <h2 class="section-title">Investors were leaving <span>without acting.</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">Before starting any design work, I sat down with the PM to understand where the product was struggling. Analytics showed that <strong>investors were browsing the marketplace but converting to offers at a low rate.</strong> The drop-off was concentrated in two moments: evaluating a borrower's profile, and completing the offer form.</p>
+        <p class="body-text">The existing app had the data — but presenting financial data ≠ building investor confidence. The core tension was: <em>how do you make a risky financial decision feel manageable?</em></p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card before">
+          <p class="compare-label">What the app had</p>
+          <div class="compare-item"><span class="compare-icon">✗</span> Raw credit data with no interpretation or context</div>
+          <div class="compare-item"><span class="compare-icon">✗</span> Offer form with 6+ manual inputs and no defaults</div>
+          <div class="compare-item"><span class="compare-icon">✗</span> No visual hierarchy — everything felt equally important</div>
+          <div class="compare-item"><span class="compare-icon">✗</span> No feedback after offer submission — total silence</div>
+          <div class="compare-item"><span class="compare-icon">✗</span> Portfolio view was fragmented across multiple tabs</div>
+        </div>
+        <div class="compare-card after">
+          <p class="compare-label">What investors needed</p>
+          <div class="compare-item"><span class="compare-icon">✓</span> A simple trust signal that summarizes borrower risk</div>
+          <div class="compare-item"><span class="compare-icon">✓</span> Smart defaults that reduce cognitive load at decision time</div>
+          <div class="compare-item"><span class="compare-icon">✓</span> Clear visual priority — "what matters most right now?"</div>
+          <div class="compare-item"><span class="compare-icon">✓</span> Status visibility after submitting an offer</div>
+          <div class="compare-item"><span class="compare-icon">✓</span> A single view of their full investment activity</div>
+        </div>
+      </div>
+
+      <p class="section-subtitle">Market context</p>
+      <p class="body-text content-narrow">Understanding the broader landscape helped me frame the opportunity with the PM and align on priorities. Lenme is operating in a rapidly growing space with clear demand from underserved populations.</p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num blue">$10.55B → $44.49B</div>
+          <div class="stat-desc">Global digital lending market projection through 2030</div>
+          <div class="stat-source">Source: Grand View Research (2024)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num blue">26.3% CAGR</div>
+          <div class="stat-desc">U.S. digital lending platforms expected to reach ~$10.4B by 2030</div>
+          <div class="stat-source">Source: Grand View Research</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">~62%</div>
+          <div class="stat-desc">Americans living paycheck-to-paycheck — liquidity shocks are common</div>
+          <div class="stat-source">Source: LendingClub / EconoFact</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RESEARCH ── -->
+    <div class="section reveal">
+      <p class="section-tag">Research</p>
+      <h2 class="section-title">What I did to <span>understand users.</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">I ran a lean research sprint over two weeks before touching any wireframes. The goal was simple: understand what prevents everyday people from investing on Lenme — and what makes them trust it enough to act.</p>
+      </div>
+
+      <div class="method-grid">
+        <div class="method-card">
+          <div class="method-icon">🎙️</div>
+          <div class="method-title">User Interviews</div>
+          <div class="method-desc">One-on-one remote sessions exploring mental models around investing, risk, and trust. I recruited users who had signed up for Lenme but never funded a loan.</div>
+          <div class="method-detail">6 participants · 30 min each</div>
+        </div>
+        <div class="method-card">
+          <div class="method-icon">📱</div>
+          <div class="method-title">Usability Testing (Current App)</div>
+          <div class="method-desc">Moderated sessions where participants attempted to complete a loan offer on the existing app. I noted every moment of hesitation, confusion, and drop-off.</div>
+          <div class="method-detail">5 participants · Think-aloud protocol</div>
+        </div>
+        <div class="method-card">
+          <div class="method-icon">📊</div>
+          <div class="method-title">Analytics Review</div>
+          <div class="method-desc">Reviewed drop-off data from Mixpanel with the PM to identify where users were abandoning the flow. Cross-referenced with support ticket themes.</div>
+          <div class="method-detail">3 months of funnel data</div>
+        </div>
+      </div>
+
+      <div class="callout amber">
+        <p><strong>Limitation I'll be upfront about:</strong> Six interviews is a small sample, and all participants were recruited from Lenme's existing user base — so they already had some platform familiarity. The findings are directional, not statistically conclusive. They were useful enough to prioritize focus areas and validate with testing later.</p>
+      </div>
+
+      <p class="section-subtitle">Affinity mapping — what I found</p>
+      <p class="body-text content-narrow">After synthesizing the interview notes, I grouped recurring themes into patterns. Three clusters emerged clearly across multiple participants:</p>
+
+      <div class="insight-list">
+        <div class="insight-item">
+          <div class="insight-num">01</div>
+          <div class="insight-body">
+            <h4>Raw data creates anxiety, not confidence</h4>
+            <p>Participants could see credit scores and DTI ratios, but didn't know how to interpret them. Seeing a "620 credit score" without context made them feel less equipped to decide, not more. They wanted someone to just tell them: is this a safe bet or not?</p>
+            <p class="insight-quote">"I see all these numbers but I don't know what's good or bad. Like, is 620 good?"</p>
+            <p class="insight-lead">→ Design implication: Build a single composite trust signal (Lenme Score) that interprets the data for them.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-num">02</div>
+          <div class="insight-body">
+            <h4>The offer form was the biggest point of paralysis</h4>
+            <p>5 of 6 usability sessions saw users slow down or abandon the flow entirely at the offer form. Having to manually input interest rate felt like a test they could fail. "What if I pick the wrong rate and lose money?" was the dominant fear.</p>
+            <p class="insight-quote">"I don't want to offer too low — that's dumb. But too high and they'll reject me. How do I know the right number?"</p>
+            <p class="insight-lead">→ Design implication: Replace blank inputs with smart defaults based on borrower risk profile. Let users adjust, not start from zero.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-num">03</div>
+          <div class="insight-body">
+            <h4>Post-submission silence killed trust</h4>
+            <p>Users who had previously submitted offers reported feeling "ghosted" — they had no idea if the offer was seen, pending, or dead. Several participants said they stopped checking the app because it felt pointless.</p>
+            <p class="insight-quote">"I made an offer three weeks ago and I still don't know what happened to it."</p>
+            <p class="insight-lead">→ Design implication: Build a clear pending offers view with real-time status and notifications.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMPETITIVE ANALYSIS ── -->
+    <div class="section reveal">
+      <p class="section-tag">Competitive Analysis</p>
+      <h2 class="section-title">Where Lenme had <span>room to differentiate.</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">I looked at four direct and adjacent competitors to understand what the market expected and where there were gaps. The goal wasn't to copy — it was to find where investor-facing UX was weakest across the board.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Loan Type</th>
+              <th>Loan Amount</th>
+              <th>Investor UX</th>
+              <th>Trust Signals</th>
+              <th>Gap vs. Lenme</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td class="td-strong">Lenme ✦</td>
+              <td>P2P short-term personal</td>
+              <td>$50 – $5,000</td>
+              <td>Mobile-first; real-time offers</td>
+              <td>Lenme Score, avatar color system</td>
+              <td><span class="tag-ok">Focus area</span></td>
+            </tr>
+            <tr>
+              <td class="td-strong">SoLo Funds</td>
+              <td>Community P2P micro-loans</td>
+              <td>$20 – $625</td>
+              <td>Community-driven; borrower sets terms</td>
+              <td>Reputation score only</td>
+              <td><span class="tag-gap">No risk detail</span></td>
+            </tr>
+            <tr>
+              <td class="td-strong">Hundy</td>
+              <td>Cash advance / micro-loan</td>
+              <td>~$100 – $250</td>
+              <td>Fast onboarding; mobile-only</td>
+              <td>Minimal — donation model</td>
+              <td><span class="tag-gap">No investor context</span></td>
+            </tr>
+            <tr>
+              <td class="td-strong">Prosper</td>
+              <td>Unsecured personal installment</td>
+              <td>$2,000 – $50,000</td>
+              <td>Desktop-heavy; more sophisticated audience</td>
+              <td>Detailed credit data; historical returns</td>
+              <td><span class="tag-gap">High complexity barrier</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <p><strong>Key takeaway:</strong> No competitor struck the right balance between showing enough data to build confidence and keeping the experience accessible to a non-expert investor. Prosper goes too deep; SoLo goes too shallow. Lenme's opportunity was in the middle — <strong>interpreted data, not just raw data.</strong></p>
+      </div>
+    </div>
+
+    <!-- ── PERSONA ── -->
+    <div class="section reveal">
+      <p class="section-tag">User Persona</p>
+      <h2 class="section-title">Designing for <span>Chris Kim.</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">Chris is a composite built from patterns across my six interviews. Most participants shared a similar profile: young professionals with disposable income, curious about investing, but intimidated by financial complexity. Chris isn't a financial expert — and that's exactly why he's the right person to design for.</p>
+      </div>
+      <div class="persona-card">
+        <div>
+          <div class="persona-avatar">CK</div>
+          <p class="persona-name">Chris Kim</p>
+          <p class="persona-type">Beginner Investor · Risk-averse</p>
+          <div class="persona-attrs">
+            <div class="persona-attr"><span class="attr-key">Age</span><span class="attr-val">27</span></div>
+            <div class="persona-attr"><span class="attr-key">Occupation</span><span class="attr-val">Jr. Software Engineer</span></div>
+            <div class="persona-attr"><span class="attr-key">Location</span><span class="attr-val">Seattle, WA</span></div>
+            <div class="persona-attr"><span class="attr-key">Income</span><span class="attr-val">$70,000 / year</span></div>
+            <div class="persona-attr"><span class="attr-key">Investing exp.</span><span class="attr-val">Minimal (savings only)</span></div>
+            <div class="persona-attr"><span class="attr-key">Goal</span><span class="attr-val">Learn safely, grow savings</span></div>
+          </div>
+        </div>
+        <div class="persona-right">
+          <div>
+            <p class="persona-section-label">From the interviews</p>
+            <p class="persona-quote">"I'm scared I'll lose money if I invest without knowing enough."</p>
+            <p class="persona-quote">"I want to try investing, but I need someone to explain it simply."</p>
+            <p class="persona-quote">"I'd feel safer starting with small amounts, like $50."</p>
+          </div>
+          <div>
+            <p class="persona-section-label">Core frustrations</p>
+            <div class="concern-list">
+              <div class="concern-item"><span class="concern-dot"></span>Fear of picking the "wrong" borrower</div>
+              <div class="concern-item"><span class="concern-dot"></span>Not knowing if his offer amount is reasonable</div>
+              <div class="concern-item"><span class="concern-dot"></span>Uncertainty about what happens after he submits</div>
+              <div class="concern-item"><span class="concern-dot"></span>Financial jargon without explanation (DTI, APR, etc.)</div>
+            </div>
+          </div>
+          <div>
+            <p class="persona-section-label">What he needs to act</p>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="hope-item">
+                <span class="hope-num">1</span>
+                <div class="hope-text"><h5>A trust signal he can understand</h5><p>One clear score — not six raw numbers</p></div>
+              </div>
+              <div class="hope-item">
+                <span class="hope-num">2</span>
+                <div class="hope-text"><h5>Defaults he can adjust</h5><p>Smart starting points instead of blank fields</p></div>
+              </div>
+              <div class="hope-item">
+                <span class="hope-num">3</span>
+                <div class="hope-text"><h5>Status visibility after offering</h5><p>Confidence that something is happening</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── JOURNEY MAP ── -->
+    <div class="section reveal">
+      <p class="section-tag">User Journey Map</p>
+      <h2 class="section-title">Five moments, <span>five failure points.</span></h2>
+      <p class="body-text content-narrow">Mapped from usability sessions and interview data — showing what investors do, think, feel, and struggle with at each step. This became the backbone for prioritizing what to design first.</p>
+      <div class="journey">
+        <div class="journey-step">
+          <p class="journey-step-num">01</p>
+          <p class="journey-step-title">Discover Loan Requests</p>
+          <p class="journey-row-label">Doing</p>
+          <p class="journey-text">Scrolling through loan listings, scanning for familiar signals.</p>
+          <p class="journey-row-label">Feeling</p>
+          <p class="journey-emotion">😐</p>
+          <p class="journey-row-label">Pain Point</p>
+          <p class="journey-pain">Overwhelming density — no clear way to sort by what matters</p>
+        </div>
+        <div class="journey-step">
+          <p class="journey-step-num">02</p>
+          <p class="journey-step-title">Evaluate Borrower</p>
+          <p class="journey-row-label">Doing</p>
+          <p class="journey-text">Opening profiles, checking numbers, comparing across cards.</p>
+          <p class="journey-row-label">Feeling</p>
+          <p class="journey-emotion">😟</p>
+          <p class="journey-row-label">Pain Point</p>
+          <p class="journey-pain">Raw data with no interpretation — "Is this good or bad?"</p>
+        </div>
+        <div class="journey-step">
+          <p class="journey-step-num">03</p>
+          <p class="journey-step-title">Submit Offer</p>
+          <p class="journey-row-label">Doing</p>
+          <p class="journey-text">Trying to fill in amount, APR, duration with no reference point.</p>
+          <p class="journey-row-label">Feeling</p>
+          <p class="journey-emotion">😰</p>
+          <p class="journey-row-label">Pain Point</p>
+          <p class="journey-pain">Decision paralysis — blank fields, no guardrails</p>
+        </div>
+        <div class="journey-step">
+          <p class="journey-step-num">04</p>
+          <p class="journey-step-title">Await Acceptance</p>
+          <p class="journey-row-label">Doing</p>
+          <p class="journey-text">Checking the app periodically. Unsure if anything is happening.</p>
+          <p class="journey-row-label">Feeling</p>
+          <p class="journey-emotion">😔</p>
+          <p class="journey-row-label">Pain Point</p>
+          <p class="journey-pain">Silence — no status updates, no feedback loop</p>
+        </div>
+        <div class="journey-step">
+          <p class="journey-step-num">05</p>
+          <p class="journey-step-title">Manage Investment</p>
+          <p class="journey-row-label">Doing</p>
+          <p class="journey-text">Trying to track repayments across multiple active loans.</p>
+          <p class="journey-row-label">Feeling</p>
+          <p class="journey-emotion">😕</p>
+          <p class="journey-row-label">Pain Point</p>
+          <p class="journey-pain">Fragmented — portfolio split across multiple tabs</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DESIGN PRINCIPLES ── -->
+    <div class="section reveal">
+      <p class="section-tag">Design Direction</p>
+      <h2 class="section-title">Three principles that <span>guided every decision.</span></h2>
+      <p class="body-text content-narrow">Before wireframing anything, I defined three principles directly from the research. Every screen decision had to answer to at least one of these. This helped me push back on feature requests that didn't serve the core investor problem.</p>
+      <div class="principles-grid">
+        <div class="principle-card">
+          <div class="principle-num">Principle 01</div>
+          <div class="principle-title">Interpret, don't just display</div>
+          <div class="principle-desc">Raw financial data without context creates anxiety. The design should translate numbers into meaning — what does a 620 credit score actually tell me as an investor?</div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">Principle 02</div>
+          <div class="principle-title">Reduce the blank page problem</div>
+          <div class="principle-desc">Blank input fields force users to generate answers from nothing. Wherever possible, give a smart default that users adjust — not a blank they have to fill cold.</div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">Principle 03</div>
+          <div class="principle-title">Status visibility at every step</div>
+          <div class="principle-desc">Investing is stressful precisely because outcomes are uncertain. Reduce that stress by making system state visible — pending, active, completed — clearly at all times.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INFORMATION ARCHITECTURE ── -->
+    <div class="section reveal">
+      <p class="section-tag">Information Architecture</p>
+      <h2 class="section-title">Mapping the full <span>dual-sided flow.</span></h2>
+      <p class="body-text content-narrow">Before designing screens, I mapped out the full architecture for both sides of the platform. Understanding the borrower flow helped me design the investor experience around the same data points — so what investors see actually reflects what borrowers submitted.</p>
+      <div class="ia-grid">
+        <div class="ia-card">
+          <div class="ia-header">Borrower Flow</div>
+          <div class="ia-steps">
+            <div class="ia-step"><div class="ia-step-num">1</div><div class="ia-step-text"><strong>Create Loan Request</strong>Set amount, purpose, and repayment terms.</div></div>
+            <div class="ia-step"><div class="ia-step-num">2</div><div class="ia-step-text"><strong>Profile Verification</strong>Provide ID, income, and credit info for Lenme Score calculation.</div></div>
+            <div class="ia-step"><div class="ia-step-num">3</div><div class="ia-step-text"><strong>Receive Offers</strong>Review investor proposals and select the best fit.</div></div>
+            <div class="ia-step"><div class="ia-step-num">4</div><div class="ia-step-text"><strong>Accept &amp; Sign</strong>Finalize agreement; funds are transferred via ACH.</div></div>
+            <div class="ia-step"><div class="ia-step-num">5</div><div class="ia-step-text"><strong>Repayment</strong>Make scheduled payments and build credit history.</div></div>
+          </div>
+        </div>
+        <div class="ia-card">
+          <div class="ia-header">Investor Flow (my scope)</div>
+          <div class="ia-steps">
+            <div class="ia-step"><div class="ia-step-num">1</div><div class="ia-step-text"><strong>Discover Requests</strong>Browse marketplace with filters and Lenme Score sorting.</div></div>
+            <div class="ia-step"><div class="ia-step-num">2</div><div class="ia-step-text"><strong>Evaluate Borrower</strong>Check Lenme Score, DTI, loan purpose, and repayment history.</div></div>
+            <div class="ia-step"><div class="ia-step-num">3</div><div class="ia-step-text"><strong>Submit Offer</strong>Set terms using smart defaults based on borrower risk.</div></div>
+            <div class="ia-step"><div class="ia-step-num">4</div><div class="ia-step-text"><strong>Await Acceptance</strong>Track offer status in real time with clear state labels.</div></div>
+            <div class="ia-step"><div class="ia-step-num">5</div><div class="ia-step-text"><strong>Track Returns</strong>Monitor repayments, ROI, and portfolio health from one view.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── IDEATION ── -->
+    <div class="section reveal">
+      <p class="section-tag">Ideation &amp; Iteration</p>
+      <h2 class="section-title">What I tried first — <span>and why I changed it.</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">I went through two major rounds of wireframing before arriving at the final design. The early explorations helped me test assumptions quickly with the PM and one real user before investing time in high-fidelity screens.</p>
+      </div>
+
+      <div class="decision-block">
+        <div class="decision-header">
+          <span class="decision-tag">Marketplace — V1 vs V2</span>
+          <span class="decision-title">How to present borrower listings</span>
+        </div>
+        <div class="decision-body">
+          <div>
+            <div class="decision-col-label">V1 — Information-heavy card</div>
+            <div class="decision-text">My first instinct was to show everything on the card: credit score, DTI, loan amount, duration, purpose, history. The idea was "more info = more informed decision."<br><br>
+            After a quick prototype review with two participants, both said the card felt overwhelming. One said he didn't even know where to look first. The card had no hierarchy — everything competed equally for attention.</div>
+          </div>
+          <div class="decision-divider"></div>
+          <div>
+            <div class="decision-col-label">V2 — Signal-first card (final)</div>
+            <div class="decision-text">I stripped the card down to only what helps with a pass/fail decision at a glance: the Lenme Score, loan amount, duration, and avatar color. Detail is preserved but moved into the profile view — accessed on tap.<br><br>
+            This reduced "browse → detail → back" friction significantly. Users could scan the list faster and tapped into profiles they were actually interested in — instead of trying to read every card fully.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="decision-block">
+        <div class="decision-header">
+          <span class="decision-tag">Offer Form — Key Iteration</span>
+          <span class="decision-title">From blank inputs to smart defaults</span>
+        </div>
+        <div class="decision-body">
+          <div>
+            <div class="decision-col-label">V1 — Blank form</div>
+            <div class="decision-text">The original form had three fields — amount, APR, and duration — all blank. This was the #1 drop-off point in our usability sessions. Participants froze. Even those who wanted to invest said they didn't know if their numbers were "correct."</div>
+          </div>
+          <div class="decision-divider"></div>
+          <div>
+            <div class="decision-col-label">V2 — Pre-filled defaults (final)</div>
+            <div class="decision-text">I worked with the PM to define a default APR range based on Lenme Score bands. The form now pre-fills a suggested APR and amount — within market norms for that risk profile. Users still have full control to adjust sliders, but they start from a reasonable baseline, not zero. This single change had the most visible impact on offer completion rate.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout amber">
+        <p><strong>What I'd do differently:</strong> I wish I had run a formal A/B test on the V1 vs V2 marketplace card, not just informal reviews. I moved to V2 based on qualitative feedback from 2 people — which was directionally right but harder to defend with data. In future projects I want to build lightweight testing infrastructure earlier.</p>
+      </div>
+    </div>
+
+    <!-- ── DESIGN SOLUTIONS ── -->
+    <div class="section reveal">
+      <p class="section-tag">Design Solutions</p>
+      <h2 class="section-title">Five touchpoints, <span>one clear flow.</span></h2>
+
+      <div class="process">
+        <div class="process-step">
+          <div class="step-num-col">1</div>
+          <div class="step-body">
+            <h4>Curated Loan Marketplace</h4>
+            <p>Each borrower card now leads with the Lenme Score — a composite trust signal — alongside loan amount, duration, and an avatar color coding risk at a glance. Secondary data like credit band and loan purpose is visible but visually subordinate. The layout allows investors to scan quickly and decide which borrowers to explore further.</p>
+            <div class="step-rationale"><strong>Why:</strong> Research showed users were overwhelmed by equal-weight data. Leading with the Lenme Score gave them a "primary judgment" to react to first, then explore detail. Scan speed improved noticeably in follow-up testing.</div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num-col">2</div>
+          <div class="step-body">
+            <h4>Smart Filtering System</h4>
+            <p>Filters organized around investor intent, not raw data fields: Risk Profile (Low / Medium / High), Credit Score Band, Loan Amount Range, Repayment Period, and Borrower History. The filter panel opens as a bottom sheet to maintain context — users don't lose the list they were browsing.</p>
+            <div class="step-rationale"><strong>Why:</strong> Early wireframes had filters in a full-screen modal. Users lost orientation — they'd filter and come back to a list they didn't recognize. Bottom sheet preserved spatial context. Borrower History filter was added after one user asked "can I see people who've paid back before?" — that wasn't in the original spec.</div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num-col">3</div>
+          <div class="step-body">
+            <h4>Borrower Snapshot — Trust at a Glance</h4>
+            <p>The borrower profile now answers "can I trust this person?" before anything else. The Lenme Score sits prominently at the top. Below it: a financial health summary (payment history, credit utilization, income verification) and a plain-language explanation of the key risk indicators. Raw data like DTI is still present but labeled with context ("Good: under 36%").</p>
+            <div class="step-rationale"><strong>Why:</strong> The most common interview quote was some version of "I see the numbers but I don't know what they mean." Labeling thresholds (Good / Fair / Concerning) directly on the data reduced that confusion without removing the underlying information for users who wanted it.</div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num-col">4</div>
+          <div class="step-body">
+            <h4>Submit Offer — Smart Defaults</h4>
+            <p>The offer modal pre-fills a suggested APR based on the borrower's Lenme Score band. Amount and duration have sliders with clear min/max bounds. A projected return estimate updates in real time as users adjust inputs — so they can see the outcome of their choices before committing.</p>
+            <div class="step-rationale"><strong>Why:</strong> The single biggest drop-off in the existing flow. Replacing blank inputs with smart defaults directly addressed the "decision paralysis" finding from research. The real-time return estimate also gave users a sense of what they stood to gain — making the action feel worthwhile, not just risky.</div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-num-col">5</div>
+          <div class="step-body">
+            <h4>Portfolio &amp; Offer Status Dashboard</h4>
+            <p>A unified view of all investor activity: Pending → Accepted → Repaying → Completed → Default. Clear state labels, repayment progress bars, and ROI summaries are visible at a glance. Push notifications for status changes close the feedback loop that was causing users to disengage after submitting offers.</p>
+            <div class="step-rationale"><strong>Why:</strong> Three interview participants said they stopped using the app because they never knew what happened to their offers. Making system state visible — and actively notifying users when it changes — converts passive drop-off into active re-engagement.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GIFs -->
+    <div class="img-block reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/649c11671d3afa5d1043caf8/99b27e12-d472-41e7-ac9a-4363308d1435/home+investor.gif" alt="Investor marketplace flow" />
+    </div>
+    <p class="img-caption reveal">Curated loan marketplace — signal-first card design</p>
+
+    <div class="img-block reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/649c11671d3afa5d1043caf8/bf219ac2-7bd1-4f89-a1f7-85686bcbea52/Convert+to+GIF+project.gif" alt="Smart filtering UI" />
+    </div>
+    <p class="img-caption reveal">Smart filtering — bottom sheet preserving spatial context</p>
+
+    <div class="img-block reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/649c11671d3afa5d1043caf8/452a8fd8-4914-4528-81cb-ed454d1e772d/Adobe+Express+-+Adobe+Express+-+bar+%281%29.gif" alt="Borrower snapshot" />
+    </div>
+    <p class="img-caption reveal">Borrower snapshot — interpreted data, not just raw numbers</p>
+
+    <!-- ── BORROWER AVATAR COLOR SYSTEM ── -->
+    <div class="section reveal">
+      <p class="section-tag">Design Detail</p>
+      <h2 class="section-title">Borrower avatar <span>color system.</span></h2>
+      <p class="body-text content-narrow">The avatar color functions as a pre-attentive signal — investors can assess risk before consciously reading a single number. This came directly from a research insight: participants responded to visual trust cues faster than textual ones. The color isn't decorative; it's a data layer.</p>
+      <div class="avatar-grid">
+        <div class="avatar-card">
+          <div class="avatar-circle red"></div>
+          <div class="avatar-info"><h4>Red</h4><p>Poor credit score · High risk tier</p></div>
+        </div>
+        <div class="avatar-card">
+          <div class="avatar-circle yellow"></div>
+          <div class="avatar-info"><h4>Yellow</h4><p>Moderate credit score · Medium risk</p></div>
+        </div>
+        <div class="avatar-card">
+          <div class="avatar-circle green"></div>
+          <div class="avatar-info"><h4>Green</h4><p>Good credit score · Lower risk tier</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TRUST SYSTEM ── -->
+    <div class="section reveal">
+      <p class="section-tag">Trust Architecture</p>
+      <h2 class="section-title">Five pillars of <span>investor trust.</span></h2>
+      <p class="body-text content-narrow">Trust isn't built with one feature — it accumulates across touchpoints. I mapped out the five design decisions that together move an investor from "skeptical" to "confident enough to act."</p>
+      <div class="trust-grid">
+        <div class="trust-item">
+          <div class="trust-num">01</div>
+          <div class="trust-title">Lenme Score</div>
+          <div class="trust-text">Composite trust signal combining DTI, credit score, and repayment history into one interpretable number.</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">02</div>
+          <div class="trust-title">Risk Filtering</div>
+          <div class="trust-text">Intent-based filters let investors define their own risk tolerance rather than parsing raw data fields.</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">03</div>
+          <div class="trust-title">Borrower Profiles</div>
+          <div class="trust-text">Contextual labels on key metrics remove ambiguity: "Good (under 36%)" next to DTI answers the "is this ok?" question.</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">04</div>
+          <div class="trust-title">Offer Defaults</div>
+          <div class="trust-text">Pre-filled APR ranges based on risk profile remove blank-slate paralysis and anchor users to market norms.</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">05</div>
+          <div class="trust-title">Status Visibility</div>
+          <div class="trust-text">Real-time offer tracking and push notifications close the feedback loop that was causing post-submission drop-off.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RESULTS ── -->
+    <div class="section reveal">
+      <p class="section-tag">Outcomes</p>
+      <h2 class="section-title">What moved — <span>and what I can claim.</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">These metrics come from an A/B test run by the PM over a 6-week period post-launch, comparing the redesigned investor flow against the previous version. I was involved in defining the test metrics but did not run the analysis myself — the PM shared the results with me after the fact.</p>
+      </div>
+
+      <div class="callout green">
+        <p><strong>What I can confidently attribute to design:</strong> The offer form completion improvements (metrics 1 and 3) most directly correspond to the smart defaults change — this was a targeted intervention with a clear before/after. The portfolio re-engagement metric (metric 5) aligns with the new status visibility feature.</p>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-num up">+13%</div>
+          <div class="result-label">Offer → Fund Conversion</div>
+          <div class="result-context">A/B test, 6 weeks post-launch · Strongest signal</div>
+        </div>
+        <div class="result-card">
+          <div class="result-num up">+11%</div>
+          <div class="result-label">7-day Funding Rate</div>
+          <div class="result-context">Loans funded within first week of listing</div>
+        </div>
+        <div class="result-card">
+          <div class="result-num down">−32%</div>
+          <div class="result-label">Median Time to Fund</div>
+          <div class="result-context">2d 4h → 1d 11h average · Blue = improvement</div>
+        </div>
+        <div class="result-card">
+          <div class="result-num up">+18%</div>
+          <div class="result-label">Diversified Portfolios</div>
+          <div class="result-context">Investors with 3+ active loans simultaneously</div>
+        </div>
+        <div class="result-card">
+          <div class="result-num up">+12%</div>
+          <div class="result-label">Repeat Funding</div>
+          <div class="result-context">Re-invested within 30 days of previous offer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REFLECTION ── -->
+    <div class="section reveal">
+      <p class="section-tag">Reflection</p>
+      <h2 class="section-title">What I'd do <span>differently.</span></h2>
+      <div class="content-narrow">
+        <p class="body-text">This project taught me a lot about designing for financial anxiety — and about the limits of small research samples. Here's my honest assessment of what worked, what I'd improve, and what I'm still curious about.</p>
+      </div>
+      <div class="reflection-grid">
+        <div class="reflection-card learned">
+          <div class="reflection-label">What worked well</div>
+          <div class="reflection-item"><span class="reflection-dot"></span>Defining design principles from research before wireframing gave me a framework to evaluate every decision — and push back on scope creep.</div>
+          <div class="reflection-item"><span class="reflection-dot"></span>The smart defaults on the offer form had the most direct, measurable impact. When in doubt, reduce blank inputs.</div>
+          <div class="reflection-item"><span class="reflection-dot"></span>Mapping the borrower flow (not just the investor flow) helped me understand what data was actually available — and design around it instead of inventing features.</div>
+        </div>
+        <div class="reflection-card next">
+          <div class="reflection-label">What I'd improve</div>
+          <div class="reflection-item"><span class="reflection-dot"></span>I'd run formal usability tests on the final prototype before launch — not just internal reviews. One round of testing caught issues I hadn't noticed after weeks of being close to the work.</div>
+          <div class="reflection-item"><span class="reflection-dot"></span>Six interviews was too small a sample to be confident in the patterns. I'd push for at least 10-12 before moving into design.</div>
+          <div class="reflection-item"><span class="reflection-dot"></span>The results metrics were defined after the design was done, not before. In future projects I want to define success metrics as part of the brief — so the design is intentionally built toward measurable goals from day one.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- ── NEXT PROJECT ── -->
+  <div class="next-wrap">
+    <a href="#" class="next-project">
+      <div>
+        <p class="next-label">Next Project</p>
+        <p class="next-title">Coming Soon</p>
+      </div>
+      <span class="next-arrow">→</span>
+    </a>
+  </div>
+
+  <footer>
+    <p>© 2025 Min Choi. All rights reserved.</p>
+    <p>Seoul, Korea · Available for opportunities</p>
+  </footer>
+
+  <div class="cursor" id="cursor2" style="display:none"></div>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+    (function loop(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+    document.querySelectorAll('a').forEach(el => {
+      el.addEventListener('mouseenter',()=>{ cursor.style.transform='translate(-50%,-50%) scale(2.5)'; cursor.style.background='var(--accent)'; });
+      el.addEventListener('mouseleave',()=>{ cursor.style.transform='translate(-50%,-50%) scale(1)'; cursor.style.background='var(--ink)'; });
+    });
+    const obs = new IntersectionObserver(entries => entries.forEach((e,i)=>{ if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*60); obs.unobserve(e.target); } }),{threshold:0.07});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  </script>
+</body>
+</html>
